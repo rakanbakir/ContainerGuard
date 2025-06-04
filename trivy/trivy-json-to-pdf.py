@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import datetime
 import time
+import logging
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, landscape, portrait
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, PageBreak, Spacer, Image, ListFlowable, ListItem
@@ -12,6 +13,9 @@ import os
 import argparse
 from collections import Counter, defaultdict
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 # Import charting libraries with fallbacks
 CHART_SUPPORT = True
 try:
@@ -20,11 +24,11 @@ try:
     from reportlab.graphics import renderPM
 except ImportError:
     CHART_SUPPORT = False
-    print("Warning: Chart libraries not available. Charts will be disabled.")
-    print("To enable charts, install required dependencies:")
-    print("  pip install reportlab pillow")
-    print("  or")
-    print("  pip install reportlab pycairo")
+    logging.warning("Chart libraries not available. Charts will be disabled.")
+    logging.info("To enable charts, install required dependencies:")
+    logging.info("  pip install reportlab pillow")
+    logging.info("  or")
+    logging.info("  pip install reportlab pycairo")
 
 # Severity levels and their colors
 SEVERITY_COLORS = {
@@ -163,13 +167,13 @@ def create_summary_chart(vulnerabilities_df, output_path):
     try:
         drawing.save(formats=['png'], outDir=output_path, fnRoot='vulnerability_summary')
         if os.path.exists(png_path):
-            print("Successfully created PNG chart")
+            logging.info("Successfully created PNG chart")
             return drawing, png_path
         else:
             raise Exception("PNG file was not created")
     except Exception as e:
-        print(f"Warning: Unable to create chart: {e}")
-        print("Continuing without chart visualization...")
+        logging.warning(f"Unable to create chart: {e}")
+        logging.info("Continuing without chart visualization...")
         return ordered_counts, None
 
 def create_vulnerability_report(trivy_json_file, output_file=None, max_vulns_per_page=25):
@@ -182,7 +186,7 @@ def create_vulnerability_report(trivy_json_file, output_file=None, max_vulns_per
     
     output_dir = os.path.dirname(output_file) or "."
     
-    print(f"Loading Trivy scan results from: {trivy_json_file}")
+    logging.info(f"Loading Trivy scan results from: {trivy_json_file}")
     try:
         # Load JSON data
         with open(trivy_json_file, 'r') as f:
@@ -200,7 +204,7 @@ def create_vulnerability_report(trivy_json_file, output_file=None, max_vulns_per
                 scan_date = timestamp
                 
         # Extract vulnerability information
-        print("Extracting vulnerability information...")
+        logging.info("Extracting vulnerability information...")
         vulnerabilities = extract_vulnerabilities(trivy_data)
         
         # Convert to DataFrame
@@ -227,7 +231,7 @@ def create_vulnerability_report(trivy_json_file, output_file=None, max_vulns_per
             chart_drawing = chart_result  # This is the actual drawing object
             ordered_severity_counts = None
         
-        print(f"Creating vulnerability report with {vuln_count} vulnerabilities...")
+        logging.info(f"Creating vulnerability report with {vuln_count} vulnerabilities...")
         # Create PDF document
         doc = SimpleDocTemplate(output_file, pagesize=portrait(letter))
         styles = getSampleStyleSheet()
@@ -316,14 +320,14 @@ def create_vulnerability_report(trivy_json_file, output_file=None, max_vulns_per
                     elements.append(Image(chart_path, width=5*inch, height=2.5*inch))
                     elements.append(Spacer(1, 0.2*inch))
                 else:
-                    print("Chart is not in PNG format, using text-based representation")
+                    logging.info("Chart is not in PNG format, using text-based representation")
                     chart_drawing = None
                     chart_path = None
                     # Force fallback to text representation
                     ordered_severity_counts = severity_counts
             except Exception as e:
-                print(f"Could not add chart image: {e}")
-                print("Falling back to text representation...")
+                logging.warning(f"Could not add chart image: {e}")
+                logging.info("Falling back to text representation...")
                 # Force fallback to text representation
                 ordered_severity_counts = severity_counts
                 
@@ -498,10 +502,10 @@ def create_vulnerability_report(trivy_json_file, output_file=None, max_vulns_per
         # Build the PDF
         doc.build(elements)
         
-        print(f"Vulnerability report successfully created: {output_file}")
+        logging.info(f"Vulnerability report successfully created: {output_file}")
         return output_file
     except Exception as e:
-        print(f"Error: {e}")
+        logging.error(f"Error: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -517,11 +521,11 @@ if __name__ == "__main__":
     
     if args.no_charts:
         CHART_SUPPORT = False
-        print("Chart generation disabled via command line option.")
+        logging.info("Chart generation disabled via command line option.")
     elif not CHART_SUPPORT:
-        print("Chart generation is not available due to missing dependencies.")
-        print("To enable charts, install required dependencies:")
-        print("  pip install pycairo")
-        print("For more information, see the README.md troubleshooting section.")
+        logging.warning("Chart generation is not available due to missing dependencies.")
+        logging.info("To enable charts, install required dependencies:")
+        logging.info("  pip install pycairo")
+        logging.info("For more information, see the README.md troubleshooting section.")
     
     create_vulnerability_report(args.json_file, args.output, args.max_vulns)

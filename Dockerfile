@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # Install system dependencies
 RUN apt-get update && \
@@ -25,7 +25,14 @@ RUN pip install -r requirements.txt
 # Copy application files
 COPY . .
 
-# Ensure proper permissions for mounted directories
-RUN chmod -R 777 /app/grype /app/trivy
+# Create a non-root user for security
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Ensure proper permissions for mounted directories and change ownership
+RUN chmod -R 777 /app/grype /app/trivy && \
+    chown -R appuser:appuser /app
+
+# Switch to non-root user
+USER appuser
 
 CMD ["python", "scan_api.py"]

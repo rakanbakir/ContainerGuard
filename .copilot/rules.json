@@ -1,0 +1,76 @@
+{
+  "rules": {
+    "python/no-eval": {
+      "description": "Avoid using eval() in Python due to security risks.",
+      "severity": "error",
+      "include": ["**/*.py"],
+      "regex": "eval\\s*\\("
+    },
+    "python/no-wildcard-imports": {
+      "description": "Avoid using wildcard imports (e.g., 'from module import *') in Python as they can pollute the namespace and make code harder to read.",
+      "severity": "warning",
+      "include": ["**/*.py"],
+      "regex": "from\\s+\\w+\\s+import\\s+\\*"
+    },
+    "general/no-todo-comments": {
+      "description": "Flag TODO comments to ensure they are addressed.",
+      "severity": "info",
+      "include": ["**/*"],
+      "regex": "TODO:"
+    },
+    "python/no-print-statements": {
+      "description": "Discourage the use of print statements in Python code, as they are often used for debugging and should be replaced with proper logging.",
+      "severity": "warning",
+      "include": ["**/*.py"],
+      "regex": "^\\s*print\\s*\\("
+    },
+    "general/no-hardcoded-secrets": {
+      "description": "Detect hardcoded secrets or credentials. This is a basic check and might need refinement.",
+      "severity": "error",
+      "include": ["**/*"],
+      "regex": "(password|secret|apikey|token)['\"]?\\s*[:=]\\s*['\"][^'\"\\s]+['\"]"
+    },
+    "python/no-pickle-usage": {
+      "description": "Avoid using 'pickle' for deserialization with untrusted data due to security risks. Consider safer alternatives like JSON if applicable, or ensure data is trusted.",
+      "severity": "warning",
+      "include": ["**/*.py"],
+      "regex": "(?:import\\s+pickle|from\\s+pickle\\s+import|pickle\\.load|pickle\\.loads)"
+    },
+    "docker/no-latest-tag": {
+      "description": "Avoid using 'latest' tag in Docker images as it can lead to unpredictable builds and security issues. Use specific version tags instead.",
+      "severity": "warning",
+      "include": ["**/Dockerfile", "**/docker-compose.yml", "**/docker-compose.yaml"],
+      "regex": "(?:FROM|image:)\\s+\\w+(?::\\w+)?/\\w+:latest|(?:FROM|image:)\\s+\\w+:latest"
+    },
+    "docker/no-outdated-base-images": {
+      "description": "Flag potentially outdated base images. Consider using newer versions for security updates.",
+      "severity": "info",
+      "include": ["**/Dockerfile"],
+      "regex": "FROM\\s+(?:ubuntu:16\\.04|ubuntu:18\\.04|debian:8|debian:9|python:3\\.[0-6]|node:1[0-4]|alpine:3\\.[0-7])"
+    },
+    "python/no-old-python-versions": {
+      "description": "Flag usage of old Python versions that may lack security updates. Consider upgrading to Python 3.8+ for security and performance benefits.",
+      "severity": "warning",
+      "include": ["**/Dockerfile", "**/requirements.txt", "**/.python-version", "**/pyproject.toml"],
+      "regex": "python:3\\.[0-7]|python_version\\s*[<>=!]+\\s*['\"]3\\.[0-7]|python_requires\\s*=\\s*['\"]>=3\\.[0-7]"
+    },
+    "python/no-unpinned-dependencies": {
+      "description": "Dependencies without version pins can lead to unexpected updates and security issues. Pin versions in requirements.txt.",
+      "severity": "warning",
+      "include": ["**/requirements.txt"],
+      "regex": "^[a-zA-Z0-9_-]+\\s*$"
+    },
+    "docker/no-root-user": {
+      "description": "Running containers as root user poses security risks. Create and use a non-root user in Dockerfiles.",
+      "severity": "warning",
+      "include": ["**/Dockerfile"],
+      "regex": "USER\\s+root|USER\\s+0"
+    },
+    "python/no-known-vulnerable-packages": {
+      "description": "Flag known vulnerable Python packages that should be updated or replaced.",
+      "severity": "error",
+      "include": ["**/requirements.txt"],
+      "regex": "(?:pillow<8\\.3\\.2|django<3\\.2\\.13|flask<2\\.0\\.3|requests<2\\.25\\.0|urllib3<1\\.26\\.5|pyyaml<5\\.4\\.0|jinja2<2\\.11\\.3)"
+    }
+  }
+}

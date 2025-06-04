@@ -192,3 +192,5 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+grype/grype-result-nginx-latest.json
+grype/grype-result-nginx-latest_vulnerability_report.pdf
