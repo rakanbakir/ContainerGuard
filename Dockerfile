@@ -25,8 +25,12 @@ RUN pip install -r requirements.txt
 # Copy application files
 COPY . .
 
-# Create a non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+# Create a non-root user for security with home directory
+RUN groupadd -r appuser && useradd -r -g appuser -m -d /home/appuser appuser
+
+# Create Trivy and Grype cache directories with proper permissions
+RUN mkdir -p /home/appuser/.cache/trivy /home/appuser/.cache/grype && \
+    chown -R appuser:appuser /home/appuser
 
 # Ensure proper permissions for mounted directories and change ownership
 RUN chmod -R 777 /app/grype /app/trivy && \
