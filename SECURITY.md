@@ -171,13 +171,6 @@ Watch for:
 
 ## Security Updates
 
-### 🔄 Update Frequency
-
-- **Critical security fixes**: Released immediately
-- **High severity issues**: Within 7 days
-- **Medium/Low severity**: Next scheduled release
-- **Dependency updates**: Monthly security review
-
 ### 📢 Communication Channels
 
 Security updates are communicated via:
