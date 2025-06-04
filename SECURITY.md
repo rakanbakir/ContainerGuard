@@ -55,13 +55,6 @@ When reporting a vulnerability, please include:
 5. **Suggested fix**: If you have ideas for remediation
 6. **Your contact information**: For follow-up questions
 
-### ⏱️ Response Timeline
-
-- **Initial response**: Within 48 hours
-- **Assessment**: Within 5 business days
-- **Fix timeline**: Critical issues within 7 days, others within 30 days
-- **Public disclosure**: After fix is released and users have time to update
-
 ## Security Best Practices for Users
 
 ### 🐳 Container Deployment
