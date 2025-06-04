@@ -194,3 +194,5 @@ cython_debug/
 .cursorindexingignore
 grype/grype-result-nginx-latest.json
 grype/grype-result-nginx-latest_vulnerability_report.pdf
+trivy/trivy-result-nginx-latest_vulnerability_report.pdf
+trivy/trivy-result-nginx-latest.json
