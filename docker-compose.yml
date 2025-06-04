@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/usr/share/nginx/html
+      - ./grype:/usr/share/nginx/html/grype
+      - ./trivy:/usr/share/nginx/html/trivy
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+      - ./grype:/app/grype
+      - ./trivy:/app/trivy
+    environment:
+      - FLASK_APP=scan_api.py
+      - FLASK_ENV=development
+    ports:
+      - "5000:5000"

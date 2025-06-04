@@ -1,0 +1,4 @@
+reportlab>=3.6.13
+pandas>=2.2.0
+pillow>=10.2.0  # For basic chart support
+# pycairo>=1.25.1  # Uncomment for better quality charts
